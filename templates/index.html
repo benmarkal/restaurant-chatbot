@@ -244,9 +244,11 @@
 
     #chat-footer {
       text-align: center;
-      font-size: 12px;
+      font-size: 11px;
       color: #d8d8d8;
-      margin-top: 12px;
+      padding: 6px 10px 10px;
+      border-top: 1px solid #2b2b2b;
+      background: #050505;
       opacity: 0.7;
     }
 
@@ -286,9 +288,14 @@
       <input
         id="chat-input"
         type="text"
-        placeholder="Ask about menu, hours, reservations, or dietary options..."
+        placeholder="Ask about menu, hours, or reservations..."
       />
       <button id="chat-send">Send</button>
+    </div>
+
+    <div id="chat-footer">
+      Powered by
+      <a href="https://kalioenterprises.com" target="_blank">Kalio Enterprises</a>
     </div>
   </div>
 
@@ -416,12 +423,6 @@
     // Initial greeting on load
     resetChat();
   </script>
-
-  <div id="chat-footer">
-    Powered by 
-    <a href="https://kalioenterprises.com" target="_blank">Kalio Enterprises</a>
-  </div>
-
 </body>
 </html>
 
