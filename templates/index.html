@@ -1,151 +1,401 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Restaurant Chatbot Demo</title>
+  <meta charset="UTF-8" />
+  <title>Restaurant AI Chatbot Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    * {
+      box-sizing: border-box;
     }
-    #chat-container {
-      width: 400px;
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #3b0d0d, #050505 55%);
+      color: #fff;
+    }
+
+    #chat-shell {
+      width: 420px;
       max-width: 95vw;
-      background: #1b1b1b;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+      background: #111;
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      border: 1px solid #3a3a3a;
     }
+
+    /* Header */
+
     #chat-header {
-      background: #b40000;
-      padding: 12px;
-      text-align: center;
-      font-weight: bold;
-    }
-    #chat-window {
-      padding: 10px;
-      height: 400px;
-      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: linear-gradient(90deg, #d72626, #b40000);
+      color: #fff;
+      font-weight: 600;
       font-size: 14px;
     }
-    .msg {
+
+    #chat-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #48ff7b;
+      box-shadow: 0 0 8px rgba(72, 255, 123, 0.7);
+    }
+
+    #chat-status {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    #chat-reset {
+      border: none;
+      background: rgba(0, 0, 0, 0.25);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    #chat-reset:hover {
+      background: rgba(0, 0, 0, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Chat area */
+
+    #chat-window {
+      padding: 12px;
+      height: 420px;
+      overflow-y: auto;
+      background: radial-gradient(circle at top, #1c1c1c, #050505 65%);
+    }
+
+    .msg-row {
+      display: flex;
       margin: 6px 0;
-      padding: 8px 10px;
-      border-radius: 6px;
-      max-width: 85%;
-      line-height: 1.3;
     }
-    .user {
-      background: #333;
-      align-self: flex-end;
+
+    .msg {
+      padding: 9px 11px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.35;
+      max-width: 80%;
+      word-wrap: break-word;
     }
-    .bot {
-      background: #252525;
-      border-left: 3px solid #b40000;
+
+    .msg.bot {
+      background: #1e1e1e;
+      border: 1px solid #333;
       align-self: flex-start;
     }
+
+    .msg.user {
+      background: #d72626;
+      border: 1px solid #f25b5b;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .msg-meta {
+      font-size: 10px;
+      opacity: 0.6;
+      margin-top: 2px;
+    }
+
+    .msg-row.user-row {
+      justify-content: flex-end;
+    }
+
+    .msg-row.bot-row {
+      justify-content: flex-start;
+    }
+
+    /* Typing indicator */
+
+    #typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin: 6px 0 4px;
+    }
+
+    #typing-indicator .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #999;
+      animation: bounce 1s infinite ease-in-out;
+    }
+
+    #typing-indicator .dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    #typing-indicator .dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.3;
+      }
+      40% {
+        transform: translateY(-4px);
+        opacity: 1;
+      }
+    }
+
+    /* Input area */
+
     #chat-input-area {
       display: flex;
-      border-top: 1px solid #333;
+      align-items: center;
+      border-top: 1px solid #2b2b2b;
+      background: #0b0b0b;
+      padding: 6px;
+      gap: 6px;
     }
+
     #chat-input {
       flex: 1;
       border: none;
-      padding: 10px;
-      font-size: 14px;
+      padding: 9px 10px;
+      font-size: 13px;
+      border-radius: 999px;
       outline: none;
+      background: #1b1b1b;
+      color: #f5f5f5;
     }
+
+    #chat-input::placeholder {
+      color: #777;
+    }
+
     #chat-send {
-      background: #b40000;
       border: none;
-      color: white;
-      padding: 0 15px;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #d72626;
+      color: #fff;
       cursor: pointer;
-      font-weight: bold;
+      min-width: 64px;
+      transition: background 0.15s ease, transform 0.1s ease, opacity 0.1s ease;
     }
-    #chat-send:hover {
-      background: #d40000;
+
+    #chat-send:hover:not(:disabled) {
+      background: #f03535;
+      transform: translateY(-1px);
+    }
+
+    #chat-send:disabled {
+      opacity: 0.6;
+      cursor: default;
+      transform: none;
+    }
+
+    /* Small screen tweaks */
+    @media (max-width: 480px) {
+      #chat-shell {
+        width: 100%;
+        height: 100vh;
+        max-width: 100%;
+        border-radius: 0;
+      }
+      #chat-window {
+        height: calc(100vh - 110px);
+      }
+    }
+
+    /* Error bar */
+
+    #chat-error {
+      display: none;
+      background: #8b1010;
+      color: #ffefef;
+      font-size: 11px;
+      padding: 5px 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div id="chat-container">
+  <div id="chat-shell">
     <div id="chat-header">
-    Restaurant AI Chatbot
-  <button id="chat-reset" style="
-    float:right;
-    background:#222;
-    color:#fff;
-    border:none;
-    padding:4px 8px;
-    margin-right:6px;
-    border-radius:4px;
-    cursor:pointer;
-  ">Reset</button>
-</div>
+      <div id="chat-title">
+        <div class="status-dot"></div>
+        <div>
+          Restaurant AI Chatbot<br />
+          <span id="chat-status">Online · BenMarKal Smokehouse BBQ</span>
+        </div>
+      </div>
+      <button id="chat-reset">Reset</button>
+    </div>
 
-    <div id="chat-window"></div>
+    <div id="chat-error"></div>
+
+    <div id="chat-window">
+      <!-- Messages will be injected here -->
+    </div>
+
     <div id="chat-input-area">
-      <input id="chat-input" type="text"
-             placeholder="Ask about menu, hours, or reservations..." />
+      <input
+        id="chat-input"
+        type="text"
+        placeholder="Ask about menu, hours, reservations, or dietary options..."
+      />
       <button id="chat-send">Send</button>
     </div>
   </div>
 
   <script>
-    const chatWindow = document.getElementById('chat-window');
-    const chatInput = document.getElementById('chat-input');
-    const chatSend = document.getElementById('chat-send');
+    const chatWindow = document.getElementById("chat-window");
+    const chatInput = document.getElementById("chat-input");
+    const chatSend = document.getElementById("chat-send");
+    const chatReset = document.getElementById("chat-reset");
+    const chatError = document.getElementById("chat-error");
+
+    // Typing indicator element
+    const typingRow = document.createElement("div");
+    typingRow.id = "typing-indicator";
+    typingRow.className = "msg-row bot-row";
+    typingRow.innerHTML = `
+      <div class="msg bot">
+        <span style="font-size:11px; opacity:0.8;">Thinking</span>
+        <div style="margin-top:5px; display:flex; gap:4px;">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    `;
+
+    function scrollToBottom() {
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
 
     function addMessage(text, sender) {
-      const div = document.createElement('div');
-      div.className = 'msg ' + sender;
-      div.textContent = text;
-      chatWindow.appendChild(div);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+      const row = document.createElement("div");
+      row.className = "msg-row " + (sender === "user" ? "user-row" : "bot-row");
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg " + sender;
+      bubble.textContent = text;
+
+      row.appendChild(bubble);
+      chatWindow.appendChild(row);
+      scrollToBottom();
+    }
+
+    function showError(message) {
+      chatError.textContent = message;
+      chatError.style.display = "block";
+      setTimeout(() => {
+        chatError.style.display = "none";
+      }, 4000);
+    }
+
+    function showTyping() {
+      chatWindow.appendChild(typingRow);
+      typingRow.style.display = "flex";
+      scrollToBottom();
+    }
+
+    function hideTyping() {
+      typingRow.style.display = "none";
     }
 
     async function sendMessage() {
       const text = chatInput.value.trim();
-      if (!text) return;
-      addMessage(text, 'user');
-      chatInput.value = '';
+      if (!text || chatSend.disabled) return;
+
+      chatError.style.display = "none";
+
+      addMessage(text, "user");
+      chatInput.value = "";
+      chatInput.focus();
+
+      // lock UI while we wait
+      chatSend.disabled = true;
+      chatInput.disabled = true;
+      showTyping();
 
       try {
-        const res = await fetch('/chat', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ message: text })
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
         });
+
+        if (!res.ok) {
+          throw new Error("Server returned " + res.status);
+        }
+
         const data = await res.json();
-        addMessage(data.reply, 'bot');
+        hideTyping();
+        addMessage(data.reply, "bot");
       } catch (err) {
-        addMessage('Error connecting to server.', 'bot');
+        hideTyping();
+        showError(
+          "There was a problem contacting the chatbot. Please try again in a moment."
+        );
+        console.error(err);
+      } finally {
+        chatSend.disabled = false;
+        chatInput.disabled = false;
+        chatInput.focus();
       }
     }
 
-    chatSend.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') sendMessage();
+    // Reset chat
+    function resetChat() {
+      chatWindow.innerHTML = "";
+      chatWindow.appendChild(typingRow); // re-attach so we can show later
+      typingRow.style.display = "none";
+      addMessage(
+        "Hi there! I'm your restaurant assistant. Ask me about our menu, hours, reservations, or dietary options!",
+        "bot"
+      );
+      scrollToBottom();
+    }
+
+    // Event listeners
+    chatSend.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
     });
+    chatReset.addEventListener("click", resetChat);
 
-    // Initial greeting
-    addMessage("Hi there! I'm your restaurant assistant. Ask me about our menu, hours, or reservations!", "bot");
-
-    // RESET CHAT FUNCTION
-    document.getElementById('chat-reset').addEventListener('click', function() {
-    chatWindow.innerHTML = "";  // Clear everything
-    addMessage("Hi there! I'm your restaurant assistant. Ask me about our menu, hours, or reservations!", "bot");
-    });
-
+    // Initial greeting on load
+    resetChat();
   </script>
 </body>
 </html>
+
